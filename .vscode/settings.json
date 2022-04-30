@@ -1,0 +1,12 @@
+{
+    "eslint.nodePath": "",  
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "eslint.validate": [
+        "javascript", "typescript"
+    ],
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": false,
+    "prettier.configPath": ".prettierrc.json"
+}

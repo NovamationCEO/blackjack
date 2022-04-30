@@ -2,37 +2,37 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.table {
+  background: radial-gradient(hsl(219, 44%, 65%) 4%,
+    hsl(219, 44%, 18%) 9%,
+    hsla(219, 44%, 20%, 0) 9%) 0 0,
+  radial-gradient(hsl(219, 44%, 27%) 4%,
+    hsl(219, 44%, 18%) 8%,
+    hsla(219, 44%, 20%, 0) 10%) 50px 50px,
+  radial-gradient(hsla(219, 44%, 30%, 0.8) 20%,
+    hsla(219, 44%, 20%, 0)) 50px 0,
+  radial-gradient(hsla(219, 44%, 30%, 0.8) 20%,
+    hsla(219, 44%, 20%, 0)) 0 50px,
+  radial-gradient(hsla(219, 44%, 20%, 1) 35%,
+    hsla(219, 44%, 20%, 0) 60%) 50px 0,
+  radial-gradient(hsla(219, 44%, 20%, 1) 35%,
+    hsla(219, 44%, 20%, 0) 60%) 100px 50px,
+  radial-gradient(hsla(219, 44%, 15%, 0.7), hsla(219, 44%, 20%, 0)) 0 0,
+  radial-gradient(hsla(219, 44%, 15%, 0.7), hsla(219, 44%, 20%, 0)) 50px 50px,
+  linear-gradient(45deg,
+    hsla(219, 44%, 20%, 0) 49%,
+    hsla(219, 44%, 0%, 1) 50%,
+    hsla(219, 44%, 20%, 0) 70%) 0 0,
+  linear-gradient(-45deg,
+    hsla(219, 44%, 20%, 0) 49%,
+    hsla(219, 44%, 0%, 1) 50%,
+    hsla(219, 44%, 20%, 0) 70%) 0 0;
+  background-color: green;
+  background-size: 100px 100px;
+  justify-content: flex-start;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
