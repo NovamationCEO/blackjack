@@ -110,7 +110,7 @@ export function GameTable() {
 	function continueBox() {
 		if (!showContinue) return null
 		return (
-			<Box className='show-continue'>
+			<Box className='show-continue' zIndex={2}>
 				{message && message.length && (
 					<GlassBox margin='10px auto' minWidth='200px'>
 						<strong>{message}</strong>
