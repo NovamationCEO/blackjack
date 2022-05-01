@@ -1,6 +1,7 @@
 import { Box, Button, Fade, Slider } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import { arrayCountTo } from '../services/arrayTools'
+import { TableState } from '../services/TableContext'
 import { GlassBox } from './GlassBox'
 import { OptionSlider } from './OptionSlider'
 
@@ -9,14 +10,12 @@ type myProps = {
 	startGame: (na: number[]) => void
 	deckCount: number
 	setDeckCount: (n: number) => void
-	bet: number
-	setBet: (n: number) => void
 }
 
 export function PlayAgain(props: myProps) {
-	const { deckCount, setDeckCount, showPlayAgain, startGame, bet, setBet } =
-		props
-	const [showDeckCount, setShowDeckCount] = React.useState(false)
+	const { deckCount, setDeckCount, showPlayAgain, startGame } = props
+	const table = useContext(TableState)
+	const { bet, setBet } = table
 
 	function deal() {
 		const freshDecks = arrayCountTo(52 * deckCount)
@@ -33,28 +32,19 @@ export function PlayAgain(props: myProps) {
 		<Fade in={showPlayAgain}>
 			<div>
 				<GlassBox>
-					<Box display='grid' gap='20px' gridTemplateColumns='1fr 1fr'>
-						<Button variant='contained' color='primary' onClick={deal}>
-							<Box width='135px'>Deal</Box>
-						</Button>
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={() => setShowDeckCount(prev => !prev)}
-						>
-							<Box width='135px'>{showDeckCount ? 'Show Bet' : 'Show Decks'}</Box>
-						</Button>
-					</Box>
-					{showDeckCount && (
+					<Button variant='contained' color='primary' onClick={deal}>
+						<Box width='135px'>Deal</Box>
+					</Button>
+
+					<Box border='1px solid #1976D2' padding='5px' margin='20px 0px 0px 0px'>
 						<OptionSlider value={deckCount} setValue={setDeckCount} max={6}>
 							Use {deckCount} Deck{deckCount > 1 ? 's' : ''}
 						</OptionSlider>
-					)}
-					{!showDeckCount && (
+
 						<OptionSlider value={bet} setValue={setBet} max={10}>
 							Bet: {bet}
 						</OptionSlider>
-					)}
+					</Box>
 				</GlassBox>
 			</div>
 		</Fade>

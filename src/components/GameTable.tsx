@@ -12,7 +12,6 @@ type myProps = {}
 
 export function GameTable(props: myProps) {
 	const {} = props
-	const [bet, setBet] = React.useState(3)
 	const [deckCount, setDeckCount] = React.useState(1)
 	const [showPlayAgain, setShowPlayAgain] = React.useState(true)
 	const [showContinue, setShowContinue] = React.useState(false)
@@ -20,7 +19,7 @@ export function GameTable(props: myProps) {
 	const [playerStand, setPlayerStand] = React.useState(false)
 	const [message, setMessage] = React.useState('')
 	const table: tableStateType = useContext(TableState)
-	const { hand, dealerHand, deck, money } = table
+	const { hand, dealerHand, deck, money, bet } = table
 
 	function loseGame(msg: string) {
 		setMessage(msg)
@@ -52,16 +51,14 @@ export function GameTable(props: myProps) {
 
 	function hit() {
 		const newHand = [...hand]
-		const draw = deck.pop()
-		if (!draw) return
+		const draw = deck.pop() || 0
 		newHand.push(draw)
 		table.setHand(newHand)
 	}
 
 	function dealerHit() {
 		const newHand = [...dealerHand]
-		const draw = deck.pop()
-		if (!draw) return
+		const draw = deck.pop() || 0
 		newHand.push(draw)
 		table.setDealerHand(newHand)
 	}
@@ -74,15 +71,14 @@ export function GameTable(props: myProps) {
 	function startGame(freshDeck: number[]) {
 		setShowPlayAgain(false)
 		setMessage('')
-		table.setDealerHand([freshDeck.pop() || -1])
-		table.setHand([freshDeck.pop() || -1, freshDeck.pop() || -1])
+		table.setDealerHand([freshDeck.pop() || 0])
+		table.setHand([freshDeck.pop() || 0, freshDeck.pop() || 0])
 		table.setDeck(freshDeck)
 	}
 
 	function getLeft(index: number, cardArr: number[]) {
 		const total = cardArr.length
 		if (total === 1) return '50%'
-
 		const num = 50 - (total / 2 - index) * 15
 		return `${num}%`
 	}
@@ -147,8 +143,6 @@ export function GameTable(props: myProps) {
 				setDeckCount={setDeckCount}
 				showPlayAgain={showPlayAgain}
 				startGame={startGame}
-				bet={bet}
-				setBet={setBet}
 			/>
 		)
 	}

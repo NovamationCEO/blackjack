@@ -11,6 +11,8 @@ export interface tableStateType {
 	setDealerHand: (na: number[]) => void
 	money: number
 	setMoney: (n: number) => void
+	bet: number
+	setBet: (n: number) => void
 }
 
 export const TableState = React.createContext({
@@ -22,13 +24,16 @@ export const TableState = React.createContext({
 	setDealerHand: (na: number[]) => null,
 	money: 50,
 	setMoney: (n: number) => null,
+	bet: 3,
+	setBet: (n: number) => null,
 } as tableStateType)
 
 const freshTableState = {
 	deck: [] as number[],
 	hand: [] as number[],
 	dealerHand: [] as number[],
-	money: 5,
+	money: 50,
+	bet: 3,
 }
 
 export function TableContext(props: myProps) {
@@ -38,6 +43,7 @@ export function TableContext(props: myProps) {
 	const [hand, setHand] = React.useState(freshTableState.hand)
 	const [dealerHand, setDealerHand] = React.useState(freshTableState.dealerHand)
 	const [money, setMoney] = React.useState(freshTableState.money)
+	const [bet, setBet] = React.useState(freshTableState.bet)
 
 	return (
 		<TableState.Provider
@@ -51,6 +57,8 @@ export function TableContext(props: myProps) {
 					setDealerHand,
 					money,
 					setMoney,
+					bet,
+					setBet,
 				} as tableStateType
 			}
 		>
