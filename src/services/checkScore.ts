@@ -7,7 +7,7 @@ export function checkScore(newHand: number[]) {
 	let result = values.reduce((p, c) => p + c, 0)
 
 	let index = values.findIndex(i => i === 11)
-	while (index > 0 && result > 21) {
+	while (index >= 0 && result > 21) {
 		values[index] = 1
 		result = values.reduce((p, c) => p + c, 0)
 		index = values.findIndex(i => i === 11)
