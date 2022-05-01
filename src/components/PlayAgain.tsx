@@ -9,22 +9,14 @@ type myProps = {
 	startGame: (na: number[]) => void
 	deckCount: number
 	setDeckCount: (n: number) => void
-	setDeck: (na: number[]) => void
 	bet: number
 	setBet: (n: number) => void
 }
 
 export function PlayAgain(props: myProps) {
-	const {
-		deckCount,
-		setDeckCount,
-		showPlayAgain,
-		startGame,
-		setDeck,
-		bet,
-		setBet,
-	} = props
-	const [showSlider, setShowSlider] = React.useState(false)
+	const { deckCount, setDeckCount, showPlayAgain, startGame, bet, setBet } =
+		props
+	const [showDeckCount, setShowDeckCount] = React.useState(false)
 
 	function deal() {
 		const freshDecks = arrayCountTo(52 * deckCount)
@@ -43,22 +35,22 @@ export function PlayAgain(props: myProps) {
 				<GlassBox>
 					<Box display='grid' gap='20px' gridTemplateColumns='1fr 1fr'>
 						<Button variant='contained' color='primary' onClick={deal}>
-							Deal
+							<Box width='135px'>Deal</Box>
 						</Button>
 						<Button
 							variant='contained'
 							color='primary'
-							onClick={() => setShowSlider(prev => !prev)}
+							onClick={() => setShowDeckCount(prev => !prev)}
 						>
-							Decks
+							<Box width='135px'>{showDeckCount ? 'Show Bet' : 'Show Decks'}</Box>
 						</Button>
 					</Box>
-					{showSlider && (
+					{showDeckCount && (
 						<OptionSlider value={deckCount} setValue={setDeckCount} max={6}>
 							Use {deckCount} Deck{deckCount > 1 ? 's' : ''}
 						</OptionSlider>
 					)}
-					{!showSlider && (
+					{!showDeckCount && (
 						<OptionSlider value={bet} setValue={setBet} max={10}>
 							Bet: {bet}
 						</OptionSlider>

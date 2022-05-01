@@ -1,87 +1,86 @@
 import { Box, Button } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
+import { TableState, tableStateType } from '../services/TableContext'
 import { ActionButton } from './ActionButton'
 import { PlayingCard } from './Card'
 import { GlassBox } from './GlassBox'
 import { PlayAgain } from './PlayAgain'
+import '../css/GameTable.css'
+import { checkScore } from '../services/checkScore'
 
 type myProps = {}
 
 export function GameTable(props: myProps) {
 	const {} = props
-	const [deck, setDeck] = React.useState([] as number[])
 	const [bet, setBet] = React.useState(3)
-	const [money, setMoney] = React.useState(25)
 	const [deckCount, setDeckCount] = React.useState(1)
 	const [showPlayAgain, setShowPlayAgain] = React.useState(true)
-	const [hand, setHand] = React.useState([] as number[])
 	const [showContinue, setShowContinue] = React.useState(false)
-	const [dealerHand, setDealerHand] = React.useState([] as number[])
+	const [showGameOver, setShowGameOver] = React.useState(false)
+	const [playerStand, setPlayerStand] = React.useState(false)
+	const [message, setMessage] = React.useState('')
+	const table: tableStateType = useContext(TableState)
+	const { hand, dealerHand, deck, money } = table
 
-	function kickedOut() {}
-
-	function loseGame() {
-		setMoney(money - bet)
-		if (money <= 0) {
-			kickedOut()
+	function loseGame(msg: string) {
+		setMessage(msg)
+		const newMoney = money - bet
+		table.setMoney(newMoney)
+		if (newMoney <= 0) {
+			setShowGameOver(true)
+			return
 		}
 		setShowContinue(true)
+		setPlayerStand(false)
 	}
 
-	function winGame() {
-		setMoney(money + bet)
+	function winGame(msg: string) {
+		setMessage(msg)
+		table.setMoney(money + bet)
 		setShowContinue(true)
-	}
-
-	function checkScore(newHand: number[]) {
-		const values = newHand.map(item => {
-			const value = (item % 13) + 1
-			if (value === 1) return 11
-			return Math.min(value, 10)
-		})
-		const result = values.reduce((p, c) => p + c, 0)
-
-		let index = values.findIndex(i => i === 11)
-		while (index > 0 && result > 21) {
-			values[index] = 1
-			index = values.findIndex(i => i === 11)
-		}
-		if (result > 21) {
-			loseGame()
-		}
-		if (result === 21 || (hand.length > 4 && result <= 21)) {
-			winGame()
-		}
+		setPlayerStand(false)
 	}
 
 	function clear() {
-		setHand([])
+		table.setHand([])
+		table.setDealerHand([])
 		setShowPlayAgain(true)
 		setShowContinue(false)
-		setDeck([])
+		table.setDeck([])
+		setPlayerStand(false)
 	}
 
 	function hit() {
-		const draw = deck.pop()
 		const newHand = [...hand]
-		newHand.push(draw || -1)
-		setHand(newHand)
+		const draw = deck.pop()
+		if (!draw) return
+		newHand.push(draw)
+		table.setHand(newHand)
+	}
+
+	function dealerHit() {
+		const newHand = [...dealerHand]
+		const draw = deck.pop()
+		if (!draw) return
+		newHand.push(draw)
+		table.setDealerHand(newHand)
 	}
 
 	function stay() {
-		clear()
+		setPlayerStand(true)
+		dealerHit()
 	}
 
 	function startGame(freshDeck: number[]) {
 		setShowPlayAgain(false)
-		const draw = freshDeck.pop()
-		if (!draw) return
-		setDealerHand([draw])
-		setDeck(freshDeck)
+		setMessage('')
+		table.setDealerHand([freshDeck.pop() || -1])
+		table.setHand([freshDeck.pop() || -1, freshDeck.pop() || -1])
+		table.setDeck(freshDeck)
 	}
 
-	function getLeft(index: number) {
-		const total = hand.length
+	function getLeft(index: number, cardArr: number[]) {
+		const total = cardArr.length
 		if (total === 1) return '50%'
 
 		const num = 50 - (total / 2 - index) * 15
@@ -89,57 +88,94 @@ export function GameTable(props: myProps) {
 	}
 
 	React.useEffect(() => {
-		checkScore(hand || [])
+		const result = checkScore(hand || [])
+		if (result > 21) {
+			loseGame(`Player Busts - ${result}`)
+		}
+		if (result === 21) {
+			winGame(hand.length === 2 ? 'Blackjack' : 'Player Stands at 21')
+		}
+		if (hand.length > 4 && result <= 21) {
+			winGame('Five-Card Charlie')
+		}
 	}, [hand])
 
+	React.useEffect(() => {
+		if (dealerHand.length <= 1) return
+		const result = checkScore(dealerHand || [])
+		if (result > 21) {
+			winGame(`Dealer Busts - ${result}`)
+			return
+		}
+		if (result >= checkScore(hand || [])) {
+			loseGame(`Dealer Wins: ${result} - ${checkScore(hand || [])}`)
+			return
+		}
+		setTimeout(() => dealerHit(), 1000)
+	}, [dealerHand])
+
+	function continueBox() {
+		if (!showContinue) return null
+		return (
+			<Box className='show-continue'>
+				{message && message.length && (
+					<GlassBox margin='10px auto' minWidth='200px'>
+						<strong>{message}</strong>
+					</GlassBox>
+				)}
+				<Button variant='contained' onClick={clear}>
+					<Box flex={1}>Continue</Box>
+				</Button>
+			</Box>
+		)
+	}
+
+	function startNextGame() {
+		if (showGameOver) {
+			return (
+				<Box className='show-continue'>
+					<GlassBox minWidth='350px'>
+						<Box>You have been eaten by a grue.</Box>
+						<Box fontWeight={700}>Game over.</Box>
+					</GlassBox>
+				</Box>
+			)
+		}
+		return (
+			<PlayAgain
+				deckCount={deckCount}
+				setDeckCount={setDeckCount}
+				showPlayAgain={showPlayAgain}
+				startGame={startGame}
+				bet={bet}
+				setBet={setBet}
+			/>
+		)
+	}
+
 	return (
-		<Box
-			display='flex'
-			flex={1}
-			flexDirection='column'
-			justifyContent='space-between'
-			padding='20px'
-		>
-			<Box flex={1} position='relative' style={{ transform: 'rotate(180deg)' }}>
+		<Box className='master-container'>
+			<Box className='hand-container-invert'>
+				{dealerHand.length === 1 && (
+					<Box position='absolute' bottom='0px' right='43%'>
+						<PlayingCard content={-1} key='dummy' />
+					</Box>
+				)}
 				{dealerHand.map((val, i) => (
-					<Box
-						key={`i${val}`}
-						position='absolute'
-						bottom='20px'
-						left={getLeft(i)}
-						style={{ transition: '1s ease all' }}
-					>
+					<Box key={`i${val}`} className='card-base' left={getLeft(i, dealerHand)}>
 						<PlayingCard content={val} key={val} />
 					</Box>
 				))}
 			</Box>
-			{showContinue && (
-				<Box margin='auto'>
-					<Button variant='contained' onClick={clear}>
-						Continue
-					</Button>
-				</Box>
-			)}
-			<Box margin='auto'>
-				<PlayAgain
-					deckCount={deckCount}
-					setDeckCount={setDeckCount}
-					showPlayAgain={showPlayAgain}
-					startGame={startGame}
-					setDeck={setDeck}
-					bet={bet}
-					setBet={setBet}
-				/>
+
+			<Box position='relative' margin='auto'>
+				{continueBox()}
+				{startNextGame()}
 			</Box>
-			<Box flex={1} position='relative'>
+
+			<Box className='hand-container'>
 				{hand.map((val, i) => (
-					<Box
-						key={`i${val}`}
-						position='absolute'
-						bottom='20px'
-						left={getLeft(i)}
-						style={{ transition: '1s ease all' }}
-					>
+					<Box key={`i${val}`} className='card-base' left={getLeft(i, hand)}>
 						<PlayingCard content={val} key={val} />
 					</Box>
 				))}
@@ -147,25 +183,15 @@ export function GameTable(props: myProps) {
 
 			<GlassBox>
 				<Box
-					display='grid'
-					gridTemplateColumns='1fr 1fr 1fr'
-					style={{
-						pointerEvents: showContinue || money <= 0 ? 'none' : 'auto',
-						opacity: showContinue || money <= 0 ? 0.2 : 1,
-						transition: '1s ease opacity',
-					}}
+					className={
+						playerStand || showContinue || money <= 0 ? 'user-bar-off' : 'user-bar-on'
+					}
 				>
-					<Box
-						display='flex'
-						flexDirection='column'
-						alignItems='center'
-						justifyContent='center'
-						fontWeight={700}
-					>
+					<Box className='flex-col' fontWeight={700}>
 						<Box>MONEY</Box>
-						<Box>{money}</Box>
+						<Box fontSize='25px'>{money}</Box>
 					</Box>
-					<ActionButton text='Hit' show={!showPlayAgain} onClick={hit} />
+					<ActionButton text='Hit' show={!showPlayAgain} onClick={() => hit()} />
 					<ActionButton text='Stay' show={!showPlayAgain} onClick={stay} />
 				</Box>
 			</GlassBox>

@@ -31,6 +31,21 @@ export function PlayingCard(props: myProps) {
 	const value = cardId % 13
 	const displayValue = letters[value] || value + 1
 
+	if (content === -1)
+		return (
+			<Box className='playing-card'>
+				<Box
+					className='card-border'
+					style={{
+						backgroundImage:
+							'repeating-linear-gradient(223deg, rgba(155, 155, 255, 0.25), rgba(155, 155, 255, 0.25) 1px, transparent 0px, transparent 2px)',
+					}}
+				>
+					{' '}
+				</Box>
+			</Box>
+		)
+
 	return (
 		<Box className='playing-card'>
 			<Box className='card-border' borderColor={deckColors[deck]}>

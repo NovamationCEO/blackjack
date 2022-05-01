@@ -4,9 +4,20 @@ import '../css/GlassBox.css'
 
 type myProps = {
 	children: any
+	margin?: string
+	minWidth?: string
 }
 
 export function GlassBox(props: myProps) {
-	const { children } = props
-	return <Box className='glass-box'>{children}</Box>
+	const { children, margin, minWidth } = props
+	return (
+		<Box className='glass-box' margin={margin} minWidth={minWidth}>
+			{children}
+		</Box>
+	)
+}
+
+GlassBox.defaultProps = {
+	margin: 'default',
+	minWidth: 'default',
 }

@@ -1,9 +1,10 @@
 .playing-card {
-    background-color: rgb(250, 250, 250);
+    background: rgb(250, 250, 250);
     width: 10vw;
     border-radius: 10px;
     display: flex;
     min-width: 100px;
+    max-width: 130px;
 }
 
 .playing-card:before {

@@ -9,7 +9,7 @@ export function ActionButton(props: myProps) {
 		<Fade in={show}>
 			<div>
 				<Button variant='contained' onClick={onClick}>
-					<Box width='200px' padding='20px'>
+					<Box width='18vw' padding='20px'>
 						{text}
 					</Box>
 				</Button>
