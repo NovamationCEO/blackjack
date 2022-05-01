@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { PlayAgain } from './PlayAgain.tsx'
 import { arrayCountTo } from '../services/arrayTools'
 
-const noop = x => null
+const noop = () => null
 const startFunc = jest.fn(x => x)
 
 it('renders PlayAgain', () => {

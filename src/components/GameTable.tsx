@@ -8,10 +8,7 @@ import { PlayAgain } from './PlayAgain'
 import '../css/GameTable.css'
 import { checkScore } from '../services/checkScore'
 
-type myProps = {}
-
-export function GameTable(props: myProps) {
-	const {} = props
+export function GameTable() {
 	const [deckCount, setDeckCount] = React.useState(1)
 	const [showPlayAgain, setShowPlayAgain] = React.useState(true)
 	const [showContinue, setShowContinue] = React.useState(false)
